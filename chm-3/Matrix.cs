@@ -47,6 +47,9 @@ public class Matrix
         Decomposed = false;
     }
 
+    /// <summary>
+    ///     Stores info about LU decomposed or not
+    /// </summary>
     public bool Decomposed { get; private set; }
 
     /// <summary>
@@ -63,13 +66,20 @@ public class Matrix
 
     public int Size { get; }
 
+    // TODO: Add code to method
+    // TODO: Add documentation
+    public void PreCond()
+    {
+    }
+
     /// <summary>
     ///     LU-decomposition with value=1 in diagonal elements of U matrix.
     ///     Corrupts base object. To access data as one matrix you need to build it from L and U.
     /// </summary>
     /// <exception cref="DivideByZeroException"> If diagonal element is zero </exception>
+    // TODO: Fix it to LU(sq)
     [Obsolete("This is LU. Need to fix it to LU(sq)")]
-    public void LuDecomposition()
+    public void ToLU()
     {
         for (var i = 1; i < Size; i++)
         {
