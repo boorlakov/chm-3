@@ -1,3 +1,5 @@
+using System.Data;
+
 namespace chm_3;
 
 public abstract class LinAlg
@@ -17,6 +19,22 @@ public abstract class LinAlg
         return res;
     }
 
+    public static double ScalarProd(double[] lhs, double[] rhs)
+    {
+        if (lhs.Length != rhs.Length)
+        {
+            throw new EvaluateException("[ERR] Vectors have different sizes.");
+        }
+
+        var res = 0.0;
+        for (var i = 0; i < lhs.Length; i++)
+        {
+            res += lhs[i] * rhs[i];
+        }
+
+        return res;
+    }
+
     // TODO: Write code to solve
     // TODO: Write tests
     /// <summary>
@@ -26,7 +44,7 @@ public abstract class LinAlg
     /// <param name="b"></param>
     /// <param name="preCondNeed"> </param>
     /// <returns> Vector x, that is solution for Ax = b equation </returns>
-    /// <exception cref="NotSupportedException"> If matrix isn't decomposed</exception>
+    /// <exception cref="NotDecomposedException"> If matrix isn't decomposed </exception>
     public static double[] Solve(Matrix m, double[] b, bool preCondNeed)
     {
         if (!m.Decomposed)

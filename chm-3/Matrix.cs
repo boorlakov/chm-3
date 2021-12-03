@@ -170,14 +170,14 @@ public class Matrix
     /// </summary>
     /// <param name="i"> rows </param>
     /// <param name="j"> columns</param>
-    /// <exception cref="FieldAccessException"> If matrix is not decomposed </exception>
+    /// <exception cref="NotDecomposedException"> If matrix is not decomposed </exception>
     /// <returns></returns>
     [Obsolete("Accessing data this way is not efficient and must be removed")]
     public double U(int i, int j)
     {
         if (!Decomposed)
         {
-            throw new FieldAccessException("Matrix must be decomposed.");
+            throw new NotDecomposedException();
         }
 
         return i <= j ? this[i, j] : 0.0;
@@ -188,14 +188,14 @@ public class Matrix
     /// </summary>
     /// <param name="i"> rows </param>
     /// <param name="j"> columns</param>
-    /// <exception cref="FieldAccessException"> If matrix is not decomposed </exception>
+    /// <exception cref="NotDecomposedException"> If matrix is not decomposed </exception>
     /// <returns></returns>
     [Obsolete("Accessing data this way is not efficient and must be removed")]
     public double L(int i, int j)
     {
         if (!Decomposed)
         {
-            throw new FieldAccessException("Matrix must be decomposed.");
+            throw new NotDecomposedException();
         }
 
         return i >= j ? this[i, j] : 0.0;
