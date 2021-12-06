@@ -25,6 +25,6 @@ public static class Program
         var maxIterFile = new StreamReader("maxIter.txt");
         var maxIter = Utils.ReadInt(maxIterFile);
 
-        // TODO: Add further program behavior
+        a.Factorize();
     }
 }

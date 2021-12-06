@@ -31,7 +31,18 @@ public static class Utils
         var ggu = ReadDoubles(gguFile);
         var di = ReadDoubles(diFile);
         var ig = ReadInts(igFile);
+
+        for (var i = 0; i < ig.Length; i++)
+        {
+            ig[i]--;
+        }
+
         var jg = ReadInts(jgFile);
+        for (var i = 0; i < jg.Length; i++)
+        {
+            jg[i]--;
+        }
+
         var size = ReadInt(sizeFile);
 
         return new Matrix(ggl, ggu, di, ig, jg, size);

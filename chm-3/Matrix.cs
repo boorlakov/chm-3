@@ -82,67 +82,65 @@ public class Matrix
     }
 
     /// <summary>
-    ///     LU-decomposition with value=1 in diagonal elements of U matrix.
+    ///     LU(sq)-decomposition with value=1 in diagonal elements of U matrix.
     ///     Corrupts base object. To access data as one matrix you need to build it from L and U.
     /// </summary>
     /// <exception cref="DivideByZeroException"> If diagonal element is zero </exception>
-    // TODO: Fix it to LU(sq)
-    [Obsolete("This is LU. Need to fix it to LU(sq)")]
     public void Factorize()
     {
-        for (var i = 1; i < Size; i++)
+        for (var i = 0; i < Size; i++)
         {
-            var sumDi = 0.0;
-            var j0 = i - (Ig[i + 1] - Ig[i]);
+            var sumDi = 0.0; // Сумма для изменения диагонального элемента
 
-            for (var ii = Ig[i] - 1; ii < Ig[i + 1] - 1; ii++)
+            var i0 = Ig[i]; // индекс 1-ого ненулевого элемента в строке
+            var i1 = Ig[i + 1]; // индекс последнего ненулевого элемента в строке
+
+            for (var k = i0; k < i1; k++)
             {
-                var j = ii - Ig[i] + j0 + 1;
-                var jBeg = Ig[j] - 1;
-                var jEnd = Ig[j + 1] - 1;
+                var j = Jg[k];
+                var j0 = Ig[j];
+                var j1 = Ig[j + 1];
 
-                if (jBeg < jEnd)
+                var iK = i0;
+                var kJ = j0;
+
+                var sumL = 0.0;
+                var sumU = 0.0;
+
+                while (iK < k && kJ < j1)
                 {
-                    var j0J = j - (jEnd - jBeg);
-                    var jjBeg = Max(j0, j0J);
-                    var jjEnd = Min(j, i - 1);
-                    var cL = 0.0;
-
-                    for (var k = 0; k <= jjEnd - jjBeg - 1; k++)
+                    if (Jg[iK] == Jg[kJ])
                     {
-                        var indAu = Ig[j] + jjBeg - j0J + k - 1;
-                        var indAl = Ig[i] + jjBeg - j0 + k - 1;
-
-                        cL += Ggu[indAu] * Ggl[indAl];
+                        sumL += Ggl[iK] * Ggu[kJ];
+                        sumU += Ggu[iK] * Ggl[kJ];
+                        iK++;
+                        kJ++;
                     }
-
-                    Ggl[ii] -= cL;
-                    var cU = 0.0;
-
-                    for (var k = 0; k <= jjEnd - jjBeg - 1; k++)
+                    else
                     {
-                        var indAl = Ig[j] + jjBeg - j0J + k - 1;
-                        var indAu = Ig[i] + jjBeg - j0 + k - 1;
-
-                        cU += Ggu[indAu] * Ggl[indAl];
+                        if (Jg[iK] > Jg[kJ])
+                        {
+                            kJ++;
+                        }
+                        else
+                        {
+                            iK++;
+                        }
                     }
-
-                    Ggu[ii] -= cU;
                 }
 
                 if (Di[j] == 0.0)
                 {
-                    throw new DivideByZeroException($"No dividing by zero. DEBUG INFO: [i:{i}; j:{j}]");
+                    throw new DivideByZeroException($"Di[{j}] has thrown at pos {i} {j}");
                 }
-
-                Ggu[ii] /= Di[j];
-                sumDi += Ggl[ii] * Ggu[ii];
+                Ggl[k] = (Ggl[k] - sumL) / Di[j];
+                Ggu[k] = (Ggu[k] - sumU) / Di[j];
+                
+                sumDi += Ggl[k] * Ggu[k];
             }
 
-            Di[i] -= sumDi;
+            Di[i] = Sqrt(Di[i] - sumDi);
         }
-
-        Decomposed = true;
     }
 
     /// <summary>
