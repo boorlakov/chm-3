@@ -12,12 +12,12 @@ public class Matrix
     ///     al is for elements of lower triangular part of matrix
     /// </summary>
     /// <returns></returns>
-    public readonly double[] Al;
+    public readonly double[] Ggl;
 
     /// <summary>
     ///     au is for elements of upper triangular part of matrix
     /// </summary>
-    public readonly double[] Au;
+    public readonly double[] Ggu;
 
     /// di is for diagonal elements
     public readonly double[] Di;
@@ -26,25 +26,34 @@ public class Matrix
     ///     ia is for profile matrix. i.e. by manipulating ia elements we can use our matrix
     ///     much more time and memory efficient
     /// </summary>
-    public readonly int[] Ia;
+    public readonly int[] Ig;
+
+    /// <summary>
+    ///     Ja is for profile matrix. i.e. by manipulating ia elements we can use our matrix
+    ///     much more time and memory efficient
+    /// </summary>
+    public readonly int[] Jg;
 
     public Matrix()
     {
-        Di = Array.Empty<double>();
-        Au = Array.Empty<double>();
-        Al = Array.Empty<double>();
-        Ia = Array.Empty<int>();
-        Decomposed = false;
+        Ggl = default!;
+        Ggu = default!;
+        Di = default!;
+        Ig = default!;
+        Jg = default!;
+        Decomposed = default!;
+        Size = default!;
     }
 
-    public Matrix(int size, double[] di, int[] ia, double[] au, double[] al)
+    public Matrix(double[] ggl, double[] ggu, double[] di, int[] ig, int[] jg, int size)
     {
-        Size = size;
-        Di = di ?? throw new ArgumentNullException(nameof(di));
-        Ia = ia ?? throw new ArgumentNullException(nameof(ia));
-        Au = au ?? throw new ArgumentNullException(nameof(au));
-        Al = al ?? throw new ArgumentNullException(nameof(al));
+        Ggl = ggl;
+        Ggu = ggu;
+        Di = di;
+        Ig = ig;
+        Jg = jg;
         Decomposed = false;
+        Size = size;
     }
 
     /// <summary>
@@ -79,18 +88,18 @@ public class Matrix
     /// <exception cref="DivideByZeroException"> If diagonal element is zero </exception>
     // TODO: Fix it to LU(sq)
     [Obsolete("This is LU. Need to fix it to LU(sq)")]
-    public void ToLU()
+    public void Factorize()
     {
         for (var i = 1; i < Size; i++)
         {
             var sumDi = 0.0;
-            var j0 = i - (Ia[i + 1] - Ia[i]);
+            var j0 = i - (Ig[i + 1] - Ig[i]);
 
-            for (var ii = Ia[i] - 1; ii < Ia[i + 1] - 1; ii++)
+            for (var ii = Ig[i] - 1; ii < Ig[i + 1] - 1; ii++)
             {
-                var j = ii - Ia[i] + j0 + 1;
-                var jBeg = Ia[j] - 1;
-                var jEnd = Ia[j + 1] - 1;
+                var j = ii - Ig[i] + j0 + 1;
+                var jBeg = Ig[j] - 1;
+                var jEnd = Ig[j + 1] - 1;
 
                 if (jBeg < jEnd)
                 {
@@ -101,24 +110,24 @@ public class Matrix
 
                     for (var k = 0; k <= jjEnd - jjBeg - 1; k++)
                     {
-                        var indAu = Ia[j] + jjBeg - j0J + k - 1;
-                        var indAl = Ia[i] + jjBeg - j0 + k - 1;
+                        var indAu = Ig[j] + jjBeg - j0J + k - 1;
+                        var indAl = Ig[i] + jjBeg - j0 + k - 1;
 
-                        cL += Au[indAu] * Al[indAl];
+                        cL += Ggu[indAu] * Ggl[indAl];
                     }
 
-                    Al[ii] -= cL;
+                    Ggl[ii] -= cL;
                     var cU = 0.0;
 
                     for (var k = 0; k <= jjEnd - jjBeg - 1; k++)
                     {
-                        var indAl = Ia[j] + jjBeg - j0J + k - 1;
-                        var indAu = Ia[i] + jjBeg - j0 + k - 1;
+                        var indAl = Ig[j] + jjBeg - j0J + k - 1;
+                        var indAu = Ig[i] + jjBeg - j0 + k - 1;
 
-                        cU += Au[indAu] * Al[indAl];
+                        cU += Ggu[indAu] * Ggl[indAl];
                     }
 
-                    Au[ii] -= cU;
+                    Ggu[ii] -= cU;
                 }
 
                 if (Di[j] == 0.0)
@@ -126,8 +135,8 @@ public class Matrix
                     throw new DivideByZeroException($"No dividing by zero. DEBUG INFO: [i:{i}; j:{j}]");
                 }
 
-                Au[ii] /= Di[j];
-                sumDi += Al[ii] * Au[ii];
+                Ggu[ii] /= Di[j];
+                sumDi += Ggl[ii] * Ggu[ii];
             }
 
             Di[i] -= sumDi;
@@ -219,10 +228,10 @@ public class Matrix
 
         if (i > j)
         {
-            return j + 1 <= i - (Ia[i + 1] - Ia[i]) ? 0.0 : Al[Ia[i + 1] + j - 1 - i];
+            return j + 1 <= i - (Ig[i + 1] - Ig[i]) ? 0.0 : Ggl[Ig[i + 1] + j - 1 - i];
         }
 
-        return i + 1 <= j - (Ia[j + 1] - Ia[j]) ? 0.0 : Au[Ia[j + 1] + i - j - 1];
+        return i + 1 <= j - (Ig[j + 1] - Ig[j]) ? 0.0 : Ggu[Ig[j + 1] + i - j - 1];
     }
 
     [Obsolete("Accessing data this way is not efficient and must be removed")]
@@ -236,16 +245,16 @@ public class Matrix
         {
             if (i > j)
             {
-                if (!(j <= i - (Ia[i + 1] - Ia[i]) + 1))
+                if (!(j <= i - (Ig[i + 1] - Ig[i]) + 1))
                 {
-                    Al[Ia[i + 1] + j - 1 - i] = value;
+                    Ggl[Ig[i + 1] + j - 1 - i] = value;
                 }
             }
             else
             {
-                if (!(i < j - (Ia[j + 1] - Ia[j]) + 1))
+                if (!(i < j - (Ig[j + 1] - Ig[j]) + 1))
                 {
-                    Au[Ia[j + 1] + i - j - 1] = value;
+                    Ggu[Ig[j + 1] + i - j - 1] = value;
                 }
             }
         }
@@ -262,21 +271,21 @@ public class Matrix
 
         sb.Append("\nia:\n");
 
-        foreach (var item in Ia)
+        foreach (var item in Ig)
         {
             sb.Append($"{item:G15} ");
         }
 
         sb.Append("\nau:\n");
 
-        foreach (var item in Au)
+        foreach (var item in Ggu)
         {
             sb.Append($"{item:G15} ");
         }
 
         sb.Append("\nal:\n");
 
-        foreach (var item in Al)
+        foreach (var item in Ggl)
         {
             sb.Append($"{item:G15} ");
         }

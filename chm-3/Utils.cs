@@ -8,21 +8,34 @@ public static class Utils
     /// <returns>Complete matrix</returns>
     public static Matrix MatrixFromFile(StreamReader file)
     {
-        var ln = file.ReadLine()!
-            .Trim();
-
-        var size = int.Parse(ln);
-
+        var ggl = ReadDoubles(file);
+        var ggu = ReadDoubles(file);
         var di = ReadDoubles(file);
+        var ig = ReadInts(file);
+        var jg = ReadInts(file);
+        var size = ReadInt(file);
 
-        var ia = ReadInts(file);
-
-        var au = ReadDoubles(file);
-
-        var al = ReadDoubles(file);
-
-        return new Matrix(size, di, ia, au, al);
+        return new Matrix(ggl, ggu, di, ig, jg, size);
     }
+
+    public static Matrix MatrixFromFiles(
+        StreamReader gglFile,
+        StreamReader gguFile,
+        StreamReader diFile,
+        StreamReader igFile,
+        StreamReader jgFile,
+        StreamReader sizeFile
+    )
+    {
+        var ggl = ReadDoubles(gglFile);
+        var ggu = ReadDoubles(gguFile);
+        var di = ReadDoubles(diFile);
+        var ig = ReadInts(igFile);
+        var jg = ReadInts(jgFile);
+        var size = ReadInt(sizeFile);
+
+        return new Matrix(ggl, ggu, di, ig, jg, size);
+    }          
 
     private static double[] ReadDoubles(StreamReader file)
     {
@@ -43,6 +56,9 @@ public static class Utils
             .Select(int.Parse)
             .ToArray();
     }
+    public static double ReadDouble(StreamReader file) => double.Parse(file.ReadLine()!.Trim(' '));
+
+    public static int ReadInt(StreamReader file) => int.Parse(file.ReadLine()!.Trim(' '));
 
     public static double[] VectorFromFile(StreamReader file) => ReadDoubles(file);
 

@@ -4,16 +4,27 @@ public static class Program
 {
     public static void Main(string[] args)
     {
-        var inMatrixFn = new StreamReader("inMatrix.txt");
-        var a = Utils.MatrixFromFile(inMatrixFn);
+        var gguInFile = new StreamReader("ggu.txt");
+        var gglInFile = new StreamReader("ggl.txt");
+        var diInFile = new StreamReader("di.txt");
+        var igInFile = new StreamReader("ig.txt");
+        var jgInFile = new StreamReader("jg.txt");
+        var sizeInFile = new StreamReader("size.txt");
 
-        var inBiasFn = new StreamReader("inBias.txt");
-        var b = Utils.VectorFromFile(inBiasFn);
+        var a = Utils.MatrixFromFiles(gglInFile, gguInFile, diInFile, igInFile, jgInFile, sizeInFile);
 
-        var inInitApproxFn = new StreamReader("inInitApproximation.txt");
-        var x = Utils.VectorFromFile(inInitApproxFn);
+        var fFile = new StreamReader("pr.txt");
+        var b = Utils.VectorFromFile(fFile);
+
+        var initApproxFile = new StreamReader("x.txt");
+        var x = Utils.VectorFromFile(initApproxFile);
+
+        var epsFile = new StreamReader("eps.txt");
+        var eps = Utils.ReadDouble(epsFile);
+
+        var maxIterFile = new StreamReader("maxIter.txt");
+        var maxIter = Utils.ReadInt(maxIterFile);
 
         // TODO: Add further program behavior
-
     }
 }
