@@ -25,6 +25,8 @@ public static class Program
         var maxIterFile = new StreamReader("maxIter.txt");
         var maxIter = Utils.ReadInt(maxIterFile);
 
-        a.Factorize();
+        var solution = LinAlg.SolveWithLocalOptimalScheme(a, b, x, eps, maxIter);
+        Console.Write("\nSolution vector:");
+        Utils.Pprint(solution);
     }
 }
