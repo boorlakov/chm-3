@@ -29,7 +29,7 @@ public static class Program
 
         var time = Stopwatch.StartNew();
 
-        var solution = LinAlg.SolveWithLOS(a, b, x, eps, maxIter);
+        var solution = LinAlg.SolveWithLOS(a, b, x, eps, maxIter, true);
 
         time.Stop();
 
