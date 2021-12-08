@@ -35,5 +35,8 @@ public static class Program
 
         Console.Write($"\nSolution vector for ({time.ElapsedMilliseconds} ms.):");
         Utils.Pprint(solution);
+
+        using var outputFile = new StreamWriter("output.txt");
+        Utils.ExportToFile(outputFile, solution);
     }
 }
