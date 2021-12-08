@@ -3,7 +3,7 @@ using static System.Math;
 namespace chm_3;
 
 /// <summary>
-///     Matrix as in math. Data is stored in profile format
+///     Matrix as in math. Data is stored in sparse format
 /// </summary>
 public class Matrix
 {
