@@ -1,32 +1,39 @@
-﻿namespace chm_3;
+﻿using System.Diagnostics;
+
+namespace chm_3;
 
 public static class Program
 {
     public static void Main(string[] args)
     {
-        var gguInFile = new StreamReader("ggu.txt");
-        var gglInFile = new StreamReader("ggl.txt");
-        var diInFile = new StreamReader("di.txt");
-        var igInFile = new StreamReader("ig.txt");
-        var jgInFile = new StreamReader("jg.txt");
-        var sizeInFile = new StreamReader("size.txt");
+        using var gguInFile = new StreamReader("ggu.txt");
+        using var gglInFile = new StreamReader("ggl.txt");
+        using var diInFile = new StreamReader("di.txt");
+        using var igInFile = new StreamReader("ig.txt");
+        using var jgInFile = new StreamReader("jg.txt");
+        using var sizeInFile = new StreamReader("size.txt");
 
         var a = Utils.MatrixFromFiles(gglInFile, gguInFile, diInFile, igInFile, jgInFile, sizeInFile);
 
-        var fFile = new StreamReader("pr.txt");
+        using var fFile = new StreamReader("pr.txt");
         var b = Utils.VectorFromFile(fFile);
 
-        var initApproxFile = new StreamReader("x.txt");
+        using var initApproxFile = new StreamReader("x.txt");
         var x = Utils.VectorFromFile(initApproxFile);
 
-        var epsFile = new StreamReader("eps.txt");
+        using var epsFile = new StreamReader("eps.txt");
         var eps = Utils.ReadDouble(epsFile);
 
-        var maxIterFile = new StreamReader("maxIter.txt");
+        using var maxIterFile = new StreamReader("maxIter.txt");
         var maxIter = Utils.ReadInt(maxIterFile);
 
-        var solution = LinAlg.SolveWithLocalOptimalScheme(a, b, x, eps, maxIter);
-        Console.Write("\nSolution vector:");
+        var time = Stopwatch.StartNew();
+
+        var solution = LinAlg.SolveWithLOS(a, b, x, eps, maxIter);
+
+        time.Stop();
+
+        Console.Write($"\nSolution vector for ({time.ElapsedMilliseconds} ms.):");
         Utils.Pprint(solution);
     }
 }
