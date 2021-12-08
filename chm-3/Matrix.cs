@@ -44,15 +44,15 @@ public class Matrix
         Size = default!;
     }
 
-    public Matrix(double[] ggl, double[] ggu, double[] di, int[] ig, int[] jg, int size)
+    public Matrix(double[] ggl, double[] ggu, double[] di, int[] ig, int[] jg, int size, bool decomposed)
     {
         Ggl = ggl;
         Ggu = ggu;
         Di = di;
         Ig = ig;
         Jg = jg;
-        Decomposed = false;
         Size = size;
+        Decomposed = decomposed;
     }
 
     /// <summary>
