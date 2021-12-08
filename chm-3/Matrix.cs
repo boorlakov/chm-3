@@ -62,12 +62,6 @@ public class Matrix
 
     public int Size { get; }
 
-    // TODO: Add code to method
-    // TODO: Add documentation
-    public void PreCond()
-    {
-    }
-
     /// <summary>
     ///     LU(sq)-decomposition with value=1 in diagonal elements of U matrix.
     ///     Corrupts base object. To access data as one matrix you need to build it from L and U.
