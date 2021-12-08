@@ -133,6 +133,15 @@ public static class Utils
         outputFile.Write(text);
     }
 
+    public static void ExportStatsToFile(StreamWriter outputFile, int iterationsNum, double relativeResidual)
+    {
+        var sb = new StringBuilder($"Iterations: {iterationsNum:G15}; Relative residual: {relativeResidual}");
+
+        var text = sb.ToString();
+
+        outputFile.Write(text);
+    }
+
     public static void Pprint(double[] vector)
     {
         Console.WriteLine("\nVector pprint:");
