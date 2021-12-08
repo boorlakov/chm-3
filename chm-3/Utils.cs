@@ -4,20 +4,6 @@ namespace chm_3;
 
 public static class Utils
 {
-    /// <param name="file"> input file for initialise matrix vectorX</param>
-    /// <returns>Complete matrix</returns>
-    public static Matrix MatrixFromFile(StreamReader file)
-    {
-        var ggl = ReadDoubles(file);
-        var ggu = ReadDoubles(file);
-        var di = ReadDoubles(file);
-        var ig = ReadInts(file);
-        var jg = ReadInts(file);
-        var size = ReadInt(file);
-
-        return new Matrix(ggl, ggu, di, ig, jg, size);
-    }
-
     public static Matrix MatrixFromFiles(
         StreamReader gglFile,
         StreamReader gguFile,
@@ -73,18 +59,11 @@ public static class Utils
 
     public static double[] VectorFromFile(StreamReader file) => ReadDoubles(file);
 
-    public static void ExportToFile(StreamWriter outputFile, double[] vectorX, double[] absVector)
+    public static void ExportToFile(StreamWriter outputFile, double[] vectorX)
     {
         var sb = new StringBuilder();
 
         foreach (var item in vectorX)
-        {
-            sb.Append($"{item:G15} ");
-        }
-
-        sb.Append('\n');
-
-        foreach (var item in absVector)
         {
             sb.Append($"{item:G15} ");
         }
