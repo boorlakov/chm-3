@@ -61,18 +61,6 @@ public class Matrix
     /// </summary>
     public bool Decomposed { get; private set; }
 
-    /// <summary>
-    ///     Warning: accessing the data in that way is not fast
-    /// </summary>
-    /// <param name="i"> row </param>
-    /// <param name="j"> column </param>
-    [Obsolete("Accessing data this way is not efficient and must be removed")]
-    public double this[int i, int j]
-    {
-        get => GetElement(i, j);
-        set => SetElement(i, j, value);
-    }
-
     public int Size { get; }
 
     // TODO: Add code to method
@@ -90,10 +78,10 @@ public class Matrix
     {
         for (var i = 0; i < Size; i++)
         {
-            var sumDi = 0.0; // Сумма для изменения диагонального элемента
+            var sumDi = 0.0;
 
-            var i0 = Ig[i]; // индекс 1-ого ненулевого элемента в строке
-            var i1 = Ig[i + 1]; // индекс последнего ненулевого элемента в строке
+            var i0 = Ig[i];
+            var i1 = Ig[i + 1];
 
             for (var k = i0; k < i1; k++)
             {
@@ -141,153 +129,7 @@ public class Matrix
 
             Di[i] = Sqrt(Di[i] - sumDi);
         }
-    }
 
-    /// <summary>
-    ///     Was made for debugging LU-decomposition.
-    /// </summary>
-    /// <returns></returns>
-    public void CheckDecomposition()
-    {
-        Console.ForegroundColor = ConsoleColor.Yellow;
-        Console.WriteLine("\nLU-check:");
-
-        for (var i = 0; i < Size; i++)
-        {
-            for (var j = 0; j < Size; j++)
-            {
-                var c = 0.0;
-
-                for (var k = 0; k < Size; k++)
-                {
-                    c += L(i, k) * U(k, j);
-                }
-
-                Console.Write($"{c:G15} ");
-            }
-
-            Console.WriteLine();
-        }
-
-        Console.ResetColor();
-    }
-
-    /// <summary>
-    ///     u[i][j] of Upper triangular matrix U
-    /// </summary>
-    /// <param name="i"> rows </param>
-    /// <param name="j"> columns</param>
-    /// <exception cref="NotDecomposedException"> If matrix is not decomposed </exception>
-    /// <returns></returns>
-    [Obsolete("Accessing data this way is not efficient and must be removed")]
-    public double U(int i, int j)
-    {
-        if (!Decomposed)
-        {
-            throw new NotDecomposedException();
-        }
-
-        return i <= j ? this[i, j] : 0.0;
-    }
-
-    /// <summary>
-    ///     l[i][j] of Lower triangular matrix L
-    /// </summary>
-    /// <param name="i"> rows </param>
-    /// <param name="j"> columns</param>
-    /// <exception cref="NotDecomposedException"> If matrix is not decomposed </exception>
-    /// <returns></returns>
-    [Obsolete("Accessing data this way is not efficient and must be removed")]
-    public double L(int i, int j)
-    {
-        if (!Decomposed)
-        {
-            throw new NotDecomposedException();
-        }
-
-        return i >= j ? this[i, j] : 0.0;
-    }
-
-    /// <summary>
-    ///     WARNING: Accessing data this way is not efficient
-    ///     Because of profile format we need to refer A[i][j] special way. 
-    ///     We have that method for accessing data more naturally.    
-    /// </summary>
-    /// <param name="i"> rows </param>
-    /// <param name="j"> columns </param>
-    /// <returns></returns>
-    [Obsolete("Accessing data this way is not efficient and must be removed")]
-    private double GetElement(int i, int j)
-    {
-        if (i == j)
-        {
-            return Di[i];
-        }
-
-        if (i > j)
-        {
-            return j + 1 <= i - (Ig[i + 1] - Ig[i]) ? 0.0 : Ggl[Ig[i + 1] + j - 1 - i];
-        }
-
-        return i + 1 <= j - (Ig[j + 1] - Ig[j]) ? 0.0 : Ggu[Ig[j + 1] + i - j - 1];
-    }
-
-    [Obsolete("Accessing data this way is not efficient and must be removed")]
-    void SetElement(int i, int j, double value)
-    {
-        if (i == j)
-        {
-            Di[i] = value;
-        }
-        else
-        {
-            if (i > j)
-            {
-                if (!(j <= i - (Ig[i + 1] - Ig[i]) + 1))
-                {
-                    Ggl[Ig[i + 1] + j - 1 - i] = value;
-                }
-            }
-            else
-            {
-                if (!(i < j - (Ig[j + 1] - Ig[j]) + 1))
-                {
-                    Ggu[Ig[j + 1] + i - j - 1] = value;
-                }
-            }
-        }
-    }
-
-    public override string ToString()
-    {
-        var sb = new StringBuilder($"{nameof(Matrix)}:\ndi:\n");
-
-        foreach (var item in Di)
-        {
-            sb.Append($"{item:G15} ");
-        }
-
-        sb.Append("\nia:\n");
-
-        foreach (var item in Ig)
-        {
-            sb.Append($"{item:G15} ");
-        }
-
-        sb.Append("\nau:\n");
-
-        foreach (var item in Ggu)
-        {
-            sb.Append($"{item:G15} ");
-        }
-
-        sb.Append("\nal:\n");
-
-        foreach (var item in Ggl)
-        {
-            sb.Append($"{item:G15} ");
-        }
-
-        return sb.ToString();
+        Decomposed = true;
     }
 }

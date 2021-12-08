@@ -94,63 +94,6 @@ public static class Utils
         outputFile.Write(text);
     }
 
-    /// <summary>
-    ///     Perfect print is using for debugging profile format.
-    ///     Prints as matrix is in default format.
-    /// </summary>
-    [Obsolete("This is slow. Use this only for debug")]
-    public static void Pprint(Matrix matrixA)
-    {
-        Console.ForegroundColor = ConsoleColor.DarkGreen;
-
-        Console.WriteLine("\nMatrix PPRINT:");
-
-        if (!matrixA.Decomposed)
-        {
-            Console.WriteLine("Undecomposed:");
-
-            for (var i = 0; i < matrixA.Size; i++)
-            {
-                for (var j = 0; j < matrixA.Size; j++)
-                {
-                    Console.Write($"{matrixA[i, j]:G15} ");
-                }
-
-                Console.WriteLine();
-            }
-        }
-        else
-        {
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine("Decomposed:");
-            Console.WriteLine("L:");
-
-            for (var i = 0; i < matrixA.Size; i++)
-            {
-                for (var j = 0; j < matrixA.Size; j++)
-                {
-                    Console.Write($"{matrixA.L(i, j)} ");
-                }
-
-                Console.WriteLine();
-            }
-
-            Console.WriteLine("U:");
-
-            for (var i = 0; i < matrixA.Size; i++)
-            {
-                for (var j = 0; j < matrixA.Size; j++)
-                {
-                    Console.Write($"{matrixA.U(i, j)} ");
-                }
-
-                Console.WriteLine();
-            }
-        }
-
-        Console.ResetColor();
-    }
-
     public static void Pprint(double[] vectorX)
     {
         Console.WriteLine("\nVector PPRINT:");
