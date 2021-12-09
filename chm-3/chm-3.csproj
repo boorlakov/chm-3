@@ -9,6 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Folder Include="TestData\BigTests" />
       <Folder Include="TestData\LittleTests" />
     </ItemGroup>
     
