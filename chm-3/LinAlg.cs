@@ -5,7 +5,7 @@ namespace chm_3;
 public abstract class LinAlg
 {
     /// <summary>
-    ///     Matrix multiplication by vector
+    /// Matrix multiplication by vector
     /// </summary>
     /// <param name="m"> Matrix, stored in sparse format</param>
     /// <param name="b"> Vector, that multiplies matrix </param>
@@ -59,8 +59,16 @@ public abstract class LinAlg
     /// <param name="x"> Initial approximation vector </param>
     /// <param name="eps"> Wanted ideal accuracy </param>
     /// <param name="maxIter"> Maximal amount of iterations </param>
+    /// <param name="needStats"> Is need to save statistics to file "stats_LOS.txt" </param>
     /// <returns> Solution vector </returns>
-    public static double[] SolveWithLocalOptimalScheme(Matrix a, double[] b, double[] x, double eps, int maxIter)
+    public static double[] SolveWithLOS(
+        Matrix a, 
+        double[] b, 
+        double[] x, 
+        double eps,
+        int maxIter,
+        bool needStats
+    )
     {
         var r = new double[b.Length];
 
@@ -77,25 +85,34 @@ public abstract class LinAlg
 
         var p = MatMul(a, z);
 
-        var k = 0;
-        var relativeResidual = Dot(r, r);
+        var k = 1;
+        var residual = Dot(r, r);
 
-        for (; k < maxIter && relativeResidual > eps; k++)
+        // Need for checking stagnation 
+        var residualNext = residual + 1.0;
+        var absResidualDifference = Math.Abs(residual - residualNext);
+
+        for (; k < maxIter && residual > eps && absResidualDifference > 1e-15; k++)
         {
             // alpha = (p_{k-1}, r_{k-1}) / (p_{k-1}, p_{k-1})
             var pp = Dot(p, p);
             var alpha = Dot(p, r) / pp;
 
-            // x(k) = x(k-1) + alpha * z(k-1)
+            // x_{k} = x_{k-1} + alpha * z_{k-1}
             for (var i = 0; i < b.Length; i++)
             {
                 x[i] += alpha * z[i];
             }
 
-            // (r_{k}, r_{k}) = (r_{k-1}, r_{k-1}) - alpha^2 * (p_{k-1}, p_{k-1})
-            relativeResidual = Dot(r, r) - alpha * alpha * pp;
+            absResidualDifference = Math.Abs(residual - residualNext);
 
-            Console.Write($"\rIter: {k}, RR: {relativeResidual}");
+            // Updating residual
+            residualNext = residual;
+
+            // (r_{k}, r_{k}) = (r_{k-1}, r_{k-1}) - alpha^2 * (p_{k-1}, p_{k-1})
+            residual -= alpha * alpha * pp;
+
+            Console.Write($"\rIter: {k}, R: {residual}, |RNext - R| = {absResidualDifference}");
 
             // Updating from r_{k-1} to r_{k}
             // r_{k} = r_{k-1} - alpha * p_{k-1}
@@ -119,6 +136,12 @@ public abstract class LinAlg
             {
                 p[i] = aR[i] + beta * p[i];
             }
+        }
+
+        if (needStats)
+        {
+            using var statsFile = new StreamWriter("stats_LOS.txt");
+            Utils.ExportStatsToFile(statsFile, k, residual);
         }
 
         return x;
