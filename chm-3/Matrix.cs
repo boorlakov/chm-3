@@ -62,6 +62,19 @@ public class Matrix
 
     public int Size { get; }
 
+    public void DiagFactorize()
+    {
+        for (var i = 0; i < Size; i++)
+        {
+            Di[i] = 1.0 / Sqrt(Di[i]);
+        }
+
+        Ggl.AsSpan().Fill(0.0);
+        Ggu.AsSpan().Fill(0.0);
+
+        Decomposed = true;
+    }
+
     /// <summary>
     /// LU(sq)-decomposition with value=1 in diagonal elements of U matrix.
     /// Corrupts base object. To access data as one matrix you need to build it from L and U.
