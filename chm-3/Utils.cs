@@ -73,7 +73,7 @@ public static class Utils
         return file
             .ReadLine()!
             .Trim()
-            .Split('\n')
+            .Split("\n")
             .Select(double.Parse)
             .ToArray();
     }
@@ -83,7 +83,7 @@ public static class Utils
         return file
             .ReadLine()!
             .Trim()
-            .Split('\n')
+            .Split("\n")
             .Select(int.Parse)
             .ToArray();
     }
@@ -114,9 +114,27 @@ public static class Utils
 
     public static double[] VectorFromFile(StreamReader file) => ReadDoubles(file);
 
+    public static double[] VectorFromFileByLine(StreamReader file) => ReadDoublesByLine(file);
+
     public static Matrix CopyMatrix(Matrix m)
     {
-        return new Matrix(m.Ggl, m.Ggu, m.Di, m.Ig, m.Jg, m.Size, m.Decomposed);
+        var ggl = new double[m.Ggl.Length];
+        m.Ggl.AsSpan().CopyTo(ggl);
+
+        var ggu = new double[m.Ggu.Length];
+        m.Ggu.AsSpan().CopyTo(ggu);
+
+        var di = new double[m.Di.Length];
+        m.Di.AsSpan().CopyTo(di);
+
+        var ig = new int[m.Ig.Length];
+        m.Ig.AsSpan().CopyTo(ig);
+
+        var jg = new int[m.Jg.Length];
+        m.Jg.AsSpan().CopyTo(jg);
+        var size = m.Size;
+        var decomposed = m.Decomposed;
+        return new Matrix(ggl, ggu, di, ig, jg, size, decomposed);
     }
 
     public static void ExportToFile(StreamWriter outputFile, double[] vector)

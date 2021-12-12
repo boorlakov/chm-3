@@ -56,15 +56,15 @@ public class Matrix
     }
 
     /// <summary>
-    ///     Stores info about LU decomposed or not
+    /// Stores info about LU decomposed or not
     /// </summary>
     public bool Decomposed { get; private set; }
 
     public int Size { get; }
 
     /// <summary>
-    ///     LU(sq)-decomposition with value=1 in diagonal elements of U matrix.
-    ///     Corrupts base object. To access data as one matrix you need to build it from L and U.
+    /// LU(sq)-decomposition with value=1 in diagonal elements of U matrix.
+    /// Corrupts base object. To access data as one matrix you need to build it from L and U.
     /// </summary>
     /// <exception cref="DivideByZeroException"> If diagonal element is zero </exception>
     public void Factorize()

@@ -18,24 +18,25 @@ public static class Program
         using var fFile = new StreamReader("../../../TestData/LittleTests/pr.txt");
         var b = Utils.VectorFromFile(fFile);
 
-        using var initApproxFile = new StreamReader("../../../TestData/LittleTests/x.txt");
-        var x = Utils.VectorFromFile(initApproxFile);
-
         using var epsFile = new StreamReader("../../../TestData/LittleTests/eps.txt");
         var eps = Utils.ReadDouble(epsFile);
 
         using var maxIterFile = new StreamReader("../../../TestData/LittleTests/maxIter.txt");
         var maxIter = Utils.ReadInt(maxIterFile);
 
+        var preCondA = Utils.CopyMatrix(a);
+
         var time = Stopwatch.StartNew();
-
-        var solution = LinAlg.SolveWithLOS(a, b, x, eps, maxIter, true);
-
+        
+        preCondA.Factorize();
+        
+        var solution = LinAlg.SolveWithLOSPrecondLUsq(a, preCondA, b, eps, maxIter, false);
+        
         time.Stop();
-
+        
         Console.Write($"\nSolution vector for ({time.ElapsedMilliseconds} ms.):");
         Utils.Pprint(solution);
-
+        
         using var outputFile = new StreamWriter("output.txt");
         Utils.ExportToFile(outputFile, solution);
     }
