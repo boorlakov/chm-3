@@ -256,6 +256,116 @@ public abstract class LinAlg
         return x;
     }
 
+    public static double[] MatMulD(Matrix d, double[] b)
+    {
+        var res = new double[b.Length];
+
+        for (var i = 0; i < res.Length; i++)
+        {
+            res[i] += d.Di[i] * b[i];
+        }
+
+        return res;
+    }
+
+    public static double[] SolveWithLOSPrecondDiag(
+        Matrix a,
+        Matrix aDiag,
+        double[] b,
+        double eps,
+        int maxIter,
+        bool needStats
+    )
+    {
+        if (!aDiag.Decomposed)
+        {
+            throw new NotDecomposedException();
+        }
+
+        var x = new double[b.Length];
+
+        // A x_{0}
+        var matMulRes = MatMul(a, x);
+
+        // f - A x_{0}
+        for (var i = 0; i < a.Size; i++)
+        {
+            matMulRes[i] = b[i] - matMulRes[i];
+        }
+
+        // r = L^{-1} (f - A x_{0}) === Lr = (f - A x_{0}) ==> Forward
+        var r = MatMulD(aDiag, matMulRes);
+
+        // r = (r_{0}, r_{0})         
+        var residual = Dot(r, r);
+
+        // Need for checking stagnation 
+        var residualNext = residual + 1.0;
+
+        var absResidualDifference = Math.Abs(residual - residualNext);
+
+        // z = U^{-1} r === Uz = r ==> Backward
+        var z = MatMulD(aDiag, r);
+
+        // A z_{0}
+        matMulRes = MatMul(a, z);
+
+        // p_{0} = L^{-1} Az_{0} === L p_{0} = A z_{0} ==> Forward
+        var p = MatMulD(aDiag, matMulRes);
+
+        // Current iteration
+        var k = 1;
+
+        for (; residual > eps && k < maxIter && absResidualDifference > 1e-15; k++)
+        {
+            var pp = Dot(p, p);
+            var alpha = Dot(p, r) / pp;
+
+            absResidualDifference = Math.Abs(residual - residualNext);
+
+            // Updating residual
+            residualNext = residual;
+
+            // We dont need to over-calculate scalar product, because we calculated at k = 0
+            // r_{k} = - α^2 (p_{k-1}, p_{k-1}) 
+            residual -= alpha * alpha * pp;
+            Console.Write($"\rLOS With LU Precond. Iter: {k}, R: {residual}, |RNext - R| = {absResidualDifference}");
+
+            // Updating to {k} 
+            for (var i = 0; i < a.Size; i++)
+            {
+                x[i] += alpha * z[i];
+                r[i] -= alpha * p[i];
+            }
+
+            // Go from right to left. Need to avoid finding reverse matrices
+            var ur = MatMulD(aDiag, r);
+            matMulRes = MatMul(a, ur);
+            var dotRhs = MatMulD(aDiag, matMulRes);
+
+            // β = - (p_{k-1}, L^{-1} A U^{-1} r_{k}) / (p_{k-1}, p_{k-1}) 
+            var beta = -Dot(p, dotRhs) / pp;
+
+            // Updating to {k} 
+            for (var i = 0; i < a.Size; i++)
+            {
+                // z_{k} = U^{-1} r + β z_{k-1} 
+                z[i] = ur[i] + beta * z[i];
+
+                // p_{k} = L^{-1} A U^{-1} r_{k} + β p_{k-1}
+                p[i] = dotRhs[i] + beta * p[i];
+            }
+        }
+
+        if (needStats)
+        {
+            using var statsFile = new StreamWriter("stats_LOSPreCondDiag.txt");
+            Utils.ExportStatsToFile(statsFile, k, residual);
+        }
+
+        return x;
+    }
+
     /// <summary>
     /// Forward solution for Lx = b. Made for avoiding L^{-1}
     /// </summary>

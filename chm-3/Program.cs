@@ -25,13 +25,19 @@ public static class Program
         var maxIter = Utils.ReadInt(maxIterFile);
 
         var preCondA = Utils.CopyMatrix(a);
+        var aDiag = Utils.CopyMatrix(a);
 
         var time = Stopwatch.StartNew();
         
         preCondA.Factorize();
+        aDiag.DiagFactorize();
+
+        // var solution = LinAlg.SolveWithLOS(a, b, eps, maxIter, false);
         
-        var solution = LinAlg.SolveWithLOSPrecondLUsq(a, preCondA, b, eps, maxIter, false);
+        // var solution = LinAlg.SolveWithLOSPrecondLUsq(a, preCondA, b, eps, maxIter, false);
         
+        var solution = LinAlg.SolveWithLOSPrecondDiag(a, aDiag, b, eps, maxIter, true);
+
         time.Stop();
         
         Console.Write($"\nSolution vector for ({time.ElapsedMilliseconds} ms.):");
