@@ -37,53 +37,50 @@ public static class Utils
     }
 
     public static Matrix MatrixFromFilesByLine(
-        StreamReader gglFile,
-        StreamReader gguFile,
-        StreamReader diFile,
-        StreamReader igFile,
-        StreamReader jgFile,
-        StreamReader sizeFile
+        string gglFileName,
+        string gguFileName,
+        string diFileName,
+        string igFileName,
+        string jgFileName,
+        string sizeFileName
     )
     {
-        var ggl = ReadDoublesByLine(gglFile);
-        var ggu = ReadDoublesByLine(gguFile);
-        var di = ReadDoublesByLine(diFile);
+        var ggl = ReadDoublesByLine(gglFileName);
+        var ggu = ReadDoublesByLine(gguFileName);
+        var di = ReadDoublesByLine(diFileName);
 
-        var ig = ReadIntsByLine(igFile);
+        var ig = ReadIntsByLine(igFileName);
 
         for (var i = 0; i < ig.Length; i++)
         {
             ig[i]--;
         }
 
-        var jg = ReadIntsByLine(jgFile);
+        var jg = ReadIntsByLine(jgFileName);
 
         for (var i = 0; i < jg.Length; i++)
         {
             jg[i]--;
         }
 
+        using var sizeFile = new StreamReader(sizeFileName);
         var size = ReadInt(sizeFile);
 
         return new Matrix(ggl, ggu, di, ig, jg, size, false);
     }
 
-    private static double[] ReadDoublesByLine(StreamReader file)
+    private static double[] ReadDoublesByLine(string fileName)
     {
-        return file
-            .ReadLine()!
-            .Trim()
-            .Split(Environment.NewLine)
+        return File
+            .ReadAllLines(fileName)
             .Select(double.Parse)
             .ToArray();
     }
 
-    private static int[] ReadIntsByLine(StreamReader file)
+    private static int[] ReadIntsByLine(string fileName)
     {
-        return file
-            .ReadLine()!
-            .Trim()
-            .Split(Environment.NewLine)
+        return File
+            .ReadAllLines(fileName)
             .Select(int.Parse)
             .ToArray();
     }
@@ -114,7 +111,7 @@ public static class Utils
 
     public static double[] VectorFromFile(StreamReader file) => ReadDoubles(file);
 
-    public static double[] VectorFromFileByLine(StreamReader file) => ReadDoublesByLine(file);
+    public static double[] VectorFromFileByLine(string file) => ReadDoublesByLine(file);
 
     public static Matrix CopyMatrix(Matrix m)
     {

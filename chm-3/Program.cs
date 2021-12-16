@@ -6,22 +6,33 @@ public static class Program
 {
     public static void Main(string[] args)
     {
-        using var gguInFile = new StreamReader("../../../TestData/LittleTests/plus/ggu.txt");
-        using var gglInFile = new StreamReader("../../../TestData/LittleTests/plus/ggl.txt");
-        using var diInFile = new StreamReader("../../../TestData/LittleTests/plus/di.txt");
-        using var igInFile = new StreamReader("../../../TestData/LittleTests/plus/ig.txt");
-        using var jgInFile = new StreamReader("../../../TestData/LittleTests/plus/jg.txt");
-        using var sizeInFile = new StreamReader("../../../TestData/LittleTests/plus/size.txt");
+        const string gguInFileName = "../../../TestData/BigTests/4545/ggu.txt"; 
+        const string gglInFileName = "../../../TestData/BigTests/4545/ggl.txt";
+        const string diInFileName = "../../../TestData/BigTests/4545/di.txt";
+        const string igInFileName = "../../../TestData/BigTests/4545/ig.txt";
+        const string jgInFileName = "../../../TestData/BigTests/4545/jg.txt";
+        const string sizeInFileName = "../../../TestData/BigTests/4545/size.txt";
 
-        var a = Utils.MatrixFromFiles(gglInFile, gguInFile, diInFile, igInFile, jgInFile, sizeInFile);
+        using var gguInFile = new StreamReader(gguInFileName);
+        using var gglInFile = new StreamReader(gglInFileName);
+        using var diInFile = new StreamReader(diInFileName);
+        using var igInFile = new StreamReader(igInFileName);
+        using var jgInFile = new StreamReader(jgInFileName);
+        using var sizeInFile = new StreamReader(sizeInFileName);
 
-        using var fFile = new StreamReader("../../../TestData/LittleTests/plus/pr.txt");
-        var b = Utils.VectorFromFile(fFile);
+        var a = Utils.MatrixFromFilesByLine(
+            gglInFileName, gguInFileName, diInFileName, igInFileName, jgInFileName, sizeInFileName);
 
-        using var epsFile = new StreamReader("../../../TestData/LittleTests/plus/eps.txt");
+        const string fFileName = "../../../TestData/BigTests/4545/pr.txt";
+        using var fFile = new StreamReader(fFileName);
+        var b = Utils.VectorFromFileByLine(fFileName);
+
+        const string epsFileName = "../../../TestData/BigTests/4545/eps.txt";
+        using var epsFile = new StreamReader(epsFileName);
         var eps = Utils.ReadDouble(epsFile);
 
-        using var maxIterFile = new StreamReader("../../../TestData/LittleTests/plus/maxIter.txt");
+        const string maxIterFileName = "../../../TestData/BigTests/4545/maxIter.txt";
+        using var maxIterFile = new StreamReader(maxIterFileName);
         var maxIter = Utils.ReadInt(maxIterFile);
 
         var preCondA = Utils.CopyMatrix(a);
@@ -47,8 +58,7 @@ public static class Program
         // Utils.Pprint(solution0);
         // Utils.Pprint(solution1);
         // Utils.Pprint(solution2);
-        
-        // using var outputFile = new StreamWriter("output.txt");
-        // Utils.ExportToFile(outputFile, solution);
+        using var outputFile = new StreamWriter("output.txt");
+        Utils.ExportToFile(outputFile, solution1);
     }
 }

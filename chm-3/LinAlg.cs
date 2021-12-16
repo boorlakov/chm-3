@@ -92,7 +92,7 @@ public abstract class LinAlg
 
         // Need for checking stagnation 
         var residualNext = residual + 1.0;
-        var absResidualDifference = Math.Abs(residual - residualNext);
+        var absResidualDifference = 1.0;
 
         for (; k < maxIter && residual > eps && absResidualDifference > 1e-15; k++)
         {
