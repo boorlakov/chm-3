@@ -73,7 +73,7 @@ public static class Utils
         return file
             .ReadLine()!
             .Trim()
-            .Split("\n")
+            .Split(Environment.NewLine)
             .Select(double.Parse)
             .ToArray();
     }
@@ -83,7 +83,7 @@ public static class Utils
         return file
             .ReadLine()!
             .Trim()
-            .Split("\n")
+            .Split(Environment.NewLine)
             .Select(int.Parse)
             .ToArray();
     }
@@ -151,9 +151,10 @@ public static class Utils
         outputFile.Write(text);
     }
 
-    public static void ExportStatsToFile(StreamWriter outputFile, int iterationsNum, double relativeResidual)
+    public static void ExportStatsToFile(StreamWriter outputFile, int iterationsNum, double relativeResidual, long ms)
     {
-        var sb = new StringBuilder($"Iterations: {iterationsNum:G15}; Relative residual: {relativeResidual}");
+        var sb = new StringBuilder(
+            $"Iterations: {iterationsNum:G15}; Relative residual: {relativeResidual}; Done for: {ms} ms.");
 
         var text = sb.ToString();
 

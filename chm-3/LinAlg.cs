@@ -1,4 +1,5 @@
 using System.Data;
+using System.Diagnostics;
 
 namespace chm_3;
 
@@ -7,7 +8,7 @@ public abstract class LinAlg
     /// <summary>
     /// Matrix multiplication by vector
     /// </summary>
-    /// <param name="m"> Matrix, stored in sparse format</param>
+    /// <param name="m"> Matrix, stored in sparse format </param>
     /// <param name="b"> Vector, that multiplies matrix </param>
     /// <returns> Resulting vector of multiplication </returns>
     public static double[] MatMul(Matrix m, double[] b)
@@ -68,6 +69,8 @@ public abstract class LinAlg
         bool needStats
     )
     {
+        var time = Stopwatch.StartNew();
+
         var x = new double[b.Length];
         var r = new double[b.Length];
 
@@ -137,10 +140,11 @@ public abstract class LinAlg
             }
         }
 
+        time.Stop();
         if (needStats)
         {
             using var statsFile = new StreamWriter("stats_LOS.txt");
-            Utils.ExportStatsToFile(statsFile, k, residual);
+            Utils.ExportStatsToFile(statsFile, k, residual, time.ElapsedMilliseconds);
         }
 
         return x;
@@ -166,6 +170,8 @@ public abstract class LinAlg
         bool needStats
     )
     {
+        var time = Stopwatch.StartNew();
+
         if (!preCondA.Decomposed)
         {
             throw new NotDecomposedException();
@@ -247,10 +253,11 @@ public abstract class LinAlg
             }
         }
 
+        time.Stop();
         if (needStats)
         {
             using var statsFile = new StreamWriter("stats_LOSPreCondLUsq.txt");
-            Utils.ExportStatsToFile(statsFile, k, residual);
+            Utils.ExportStatsToFile(statsFile, k, residual, time.ElapsedMilliseconds);
         }
 
         return x;
@@ -277,6 +284,8 @@ public abstract class LinAlg
         bool needStats
     )
     {
+        var time = Stopwatch.StartNew();
+
         if (!aDiag.Decomposed)
         {
             throw new NotDecomposedException();
@@ -329,7 +338,7 @@ public abstract class LinAlg
             // We dont need to over-calculate scalar product, because we calculated at k = 0
             // r_{k} = - α^2 (p_{k-1}, p_{k-1}) 
             residual -= alpha * alpha * pp;
-            Console.Write($"\rLOS With LU Precond. Iter: {k}, R: {residual}, |RNext - R| = {absResidualDifference}");
+            Console.Write($"\rLOS With Diag Precond. Iter: {k}, R: {residual}, |RNext - R| = {absResidualDifference}");
 
             // Updating to {k} 
             for (var i = 0; i < a.Size; i++)
@@ -356,11 +365,11 @@ public abstract class LinAlg
                 p[i] = dotRhs[i] + beta * p[i];
             }
         }
-
+        time.Stop();
         if (needStats)
         {
             using var statsFile = new StreamWriter("stats_LOSPreCondDiag.txt");
-            Utils.ExportStatsToFile(statsFile, k, residual);
+            Utils.ExportStatsToFile(statsFile, k, residual, time.ElapsedMilliseconds);
         }
 
         return x;

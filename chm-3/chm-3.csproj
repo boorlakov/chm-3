@@ -10,7 +10,7 @@
 
     <ItemGroup>
       <Folder Include="TestData\BigTests" />
-      <Folder Include="TestData\LittleTests" />
+      <Folder Include="TestData\LittleTests\plus" />
     </ItemGroup>
     
 </Project>
