@@ -6,22 +6,22 @@ public static class Program
 {
     public static void Main(string[] args)
     {
-        using var gguInFile = new StreamReader("../../../TestData/LittleTests/minus/ggu.txt");
-        using var gglInFile = new StreamReader("../../../TestData/LittleTests/minus/ggl.txt");
-        using var diInFile = new StreamReader("../../../TestData/LittleTests/minus/di.txt");
-        using var igInFile = new StreamReader("../../../TestData/LittleTests/minus/ig.txt");
-        using var jgInFile = new StreamReader("../../../TestData/LittleTests/minus/jg.txt");
-        using var sizeInFile = new StreamReader("../../../TestData/LittleTests/minus/size.txt");
+        using var gguInFile = new StreamReader("../../../TestData/LittleTests/plus/ggu.txt");
+        using var gglInFile = new StreamReader("../../../TestData/LittleTests/plus/ggl.txt");
+        using var diInFile = new StreamReader("../../../TestData/LittleTests/plus/di.txt");
+        using var igInFile = new StreamReader("../../../TestData/LittleTests/plus/ig.txt");
+        using var jgInFile = new StreamReader("../../../TestData/LittleTests/plus/jg.txt");
+        using var sizeInFile = new StreamReader("../../../TestData/LittleTests/plus/size.txt");
 
         var a = Utils.MatrixFromFiles(gglInFile, gguInFile, diInFile, igInFile, jgInFile, sizeInFile);
 
-        using var fFile = new StreamReader("../../../TestData/LittleTests/minus/pr.txt");
+        using var fFile = new StreamReader("../../../TestData/LittleTests/plus/pr.txt");
         var b = Utils.VectorFromFile(fFile);
 
-        using var epsFile = new StreamReader("../../../TestData/LittleTests/minus/eps.txt");
+        using var epsFile = new StreamReader("../../../TestData/LittleTests/plus/eps.txt");
         var eps = Utils.ReadDouble(epsFile);
 
-        using var maxIterFile = new StreamReader("../../../TestData/LittleTests/minus/maxIter.txt");
+        using var maxIterFile = new StreamReader("../../../TestData/LittleTests/plus/maxIter.txt");
         var maxIter = Utils.ReadInt(maxIterFile);
 
         var preCondA = Utils.CopyMatrix(a);
